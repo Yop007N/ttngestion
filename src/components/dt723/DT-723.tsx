@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/card'
 import { Input } from '../ui/input'
 import { TableHeader, TableRow, TableHead, TableBody, TableCell } from '../ui/table'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { useAuth } from '../../contexts'
 interface Node {
   id: string
   latitude: number
@@ -21,13 +22,10 @@ interface Notification {
   createdAt: string
 }
 
-interface DT723Props {
-  token: string
-}
-
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWF0aWFndWlsZXJhIiwiYSI6ImNsZHVlOXFqZTA0emczbnA5eWxmaWNia2sifQ.G7L0t9gYA7XpsLuiEuVu1g'
 
-const DT723: React.FC<DT723Props> = ({ token }) => {
+const DT723: React.FC = () => {
+  const { token } = useAuth();
   const [nodes, setNodes] = useState<Node[]>([])
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [selectedNode, setSelectedNode] = useState<Node | null>(null)
@@ -47,7 +45,7 @@ const DT723: React.FC<DT723Props> = ({ token }) => {
       try {
         const response = await fetch('http://localhost:3001/api/locations', {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token || ''}`
           }
         })
         if (!response.ok) {

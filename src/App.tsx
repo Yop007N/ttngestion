@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -14,28 +14,10 @@ import MQTTConfig from "./components/mqttConfig/MQTTConfig";
 
 import Diseño from "./components/layout/Layout";
 import DT723 from "./components/dt723/DT-723";
+import { AuthProvider, useAuth } from "./contexts";
 
-export default function App() {
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("ttnToken")
-  );
-  const [userId, setUserId] = useState<string | null>(
-    localStorage.getItem("ttnUserId")
-  );
-
-  const handleLogin = (newToken: string, newUserId: string) => {
-    setToken(newToken);
-    setUserId(newUserId);
-    localStorage.setItem("ttnToken", newToken);
-    localStorage.setItem("ttnUserId", newUserId);
-  };
-
-  const handleLogout = () => {
-    setToken(null);
-    setUserId(null);
-    localStorage.removeItem("ttnToken");
-    localStorage.removeItem("ttnUserId");
-  };
+function AppContent() {
+  const { token, login, logout, isAuthenticated } = useAuth();
 
   return (
     <Router>
@@ -43,18 +25,18 @@ export default function App() {
         <Route
           path="/login"
           element={
-            token ? (
+            isAuthenticated ? (
               <Navigate to="/" replace />
             ) : (
-              <Login onLogin={handleLogin} />
+              <Login onLogin={login} />
             )
           }
         />
         <Route
           path="/"
           element={
-            token ? (
-              <Diseño onCerrarSesion={handleLogout} />
+            isAuthenticated ? (
+              <Diseño onCerrarSesion={logout} />
             ) : (
               <Navigate to="/login" replace />
             )
@@ -64,10 +46,18 @@ export default function App() {
           <Route path="gateways" element={<Gateways />} />
           <Route path="devices" element={<Devices />} />
           <Route path="applications" element={<Applications />} />
-          <Route path="mqtt" element={<MQTTConfig token={token || ""} />} />
-          <Route path="dt723" element={<DT723 token={token || ""} />} />
+          <Route path="mqtt" element={<MQTTConfig />} />
+          <Route path="dt723" element={<DT723 />} />
         </Route>
       </Routes>
     </Router>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 import { Tooltip } from 'react-tooltip'
 import { Key, Copy } from 'lucide-react'
-
-interface PropsMQTTConfig {
-  token: string
-}
+import { useAuth } from '../../contexts'
 
 interface ConfiguracionMQTT {
   direccionPublica: string
@@ -12,7 +9,8 @@ interface ConfiguracionMQTT {
   nombreUsuario: string
 }
 
-export default function ConfiguracionMQTTComponent({ token }: PropsMQTTConfig) {
+export default function ConfiguracionMQTTComponent() {
+  const { token } = useAuth();
   const [config] = useState<ConfiguracionMQTT>({
     direccionPublica: '10.4.33.18:1883',
     direccionPublicaTLS: '10.4.33.18:8883',
@@ -112,12 +110,12 @@ export default function ConfiguracionMQTTComponent({ token }: PropsMQTTConfig) {
                 <input
                   type="text"
                   id="token"
-                  value={token}
+                  value={token || ''}
                   readOnly
                   className="flex-1 block w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-l-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <button
-                  onClick={() => copiarAlPortapapeles(token)}
+                  onClick={() => copiarAlPortapapeles(token || '')}
                   className="inline-flex items-center px-3 py-2 border border-l-0 border-gray-600 rounded-r-md bg-gray-700 text-gray-300 hover:bg-gray-600"
                 >
                   <Copy className="h-5 w-5" />
