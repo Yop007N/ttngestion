@@ -15,6 +15,7 @@ import MQTTConfig from "./components/mqttConfig/MQTTConfig";
 import Diseño from "./components/layout/Layout";
 import DT723 from "./components/dt723/DT-723";
 import { AuthProvider, useAuth } from "./contexts";
+import { ErrorBoundary } from "./components/errorBoundary";
 
 function AppContent() {
   const { token, login, logout, isAuthenticated } = useAuth();
@@ -56,8 +57,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
